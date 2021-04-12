@@ -4,13 +4,22 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
+#define CHAR_LIMIT 51
 #define PORT 8080
    
 int main(int argc, char const *argv[])
 {
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
-    char *hello = "Hello from client";
+   
+   //allow user to send any message within the CHAR_LIMIT
+    char *msg;
+    msg = (char*) calloc(CHAR_LIMIT, sizeof(char));
+    printf("insert message to send to server: ");
+    fgets(msg, (50*sizeof(char)), stdin);
+    
+    
     char buffer[1024] = {0};
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -33,8 +42,8 @@ int main(int argc, char const *argv[])
         printf("\nConnection Failed \n");
         return -1;
     }
-    send(sock , hello , strlen(hello) , 0 );
-    printf("Hello message sent\n");
+    send(sock , msg , (CHAR_LIMIT*sizeof(char)) , 0 );
+    printf("message sent: %s\n", msg);
     valread = read( sock , buffer, 1024);
     printf("%s\n",buffer );
     return 0;
