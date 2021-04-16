@@ -5,7 +5,53 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <errno.h>
+#include <sys/types.h>
+
 #define PORT 8080
+
+/**
+ * This method is an error-reporting function, used to report a unix-style error.
+ * In this program it is used in the Fork method to report errors caused when calling fork.
+ * 
+ * routine: UnixError
+ * 
+ * return type: void
+ * 
+ * parameters:
+ *      msg     [char*]     the message to be displayed when an error is found
+ * 
+ * @author George Adler Buras
+ * @since 4/7/2021
+ * 
+ */
+void UnixError(char* msg)
+{
+    fprintf(stderr, "%s: %s\n", msg, strerror(errno));
+    exit(0);
+}
+
+/**
+ * This method is a Stevens-style error-handling wrapper used to simplify
+ * error reporting when calling fork
+ * 
+ * routine: Fork
+ * 
+ * return type: pid_t
+ * 
+ * @author George Adler Buras
+ * @since 4/7/2021
+ * 
+ */
+pid_t Fork(void)
+{
+    pid_t pid;
+
+    if ((pid = fork()) < 0)
+        UnixError("Fork error");
+    return pid;
+}
+
 int main(int argc, char const *argv[])
 {
     int server_fd, new_socket, valread;
@@ -45,24 +91,33 @@ int main(int argc, char const *argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
-                    (socklen_t*)&addrlen))<0)
-    {
-        perror("accept");
-        exit(EXIT_FAILURE);
-    }
 
     while(1)
-    {   
-        valread = read( new_socket , buffer, 1024);
-
-        if(strncmp(buffer, "/exit", 5) == 0)
+    {
+        if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
+                        (socklen_t*)&addrlen))<0)
         {
-            return 0; 
+            perror("accept");
+            exit(EXIT_FAILURE);
         }
 
-        printf("%s\n",buffer );
-        send(new_socket , hello , strlen(hello) , 0 );
-        printf("Hello message sent\n");
+        if (Fork() == 0)
+        {
+            while(1)
+            {   
+                valread = read( new_socket , buffer, 1024);
+
+                if(strncmp(buffer, "/exit", 5) == 0)
+                {
+                    exit(0); 
+                }
+                else
+                {
+                    printf("%s\n",buffer );
+                    send(new_socket , hello , strlen(hello) , 0 );
+                    printf("Hello message sent\n");
+                }
+            }
+        }
     }
 }
