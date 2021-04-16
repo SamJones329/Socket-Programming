@@ -49,7 +49,7 @@ int main(int argc, char const *argv[])
 			if(strncmp(msg, "/exit", 5) == 0)
 			{
 				free(msg);
-				return 0; 
+				exit(0); 
 			}
 			
 			send(sock , msg , (CHAR_LIMIT*sizeof(char)) , 0 );
