@@ -20,7 +20,7 @@ int main(int argc, char const *argv[])
     while(1){
     
     	    //ask for user input to determine message to send
-	    printf("insert message to send to server, or type '/exit' to end program: \n");
+	    printf("insert message to send to server, or type '/exit' to end program (limit %d characters): \n", CHAR_LIMIT-1);
 	    fgets(msg, (50*sizeof(char)), stdin);
 	    
 	    if(strncmp(msg, "/exit", 5) == 0){
