@@ -107,17 +107,18 @@ int main(int argc, char const *argv[])
             {   
                 valread = read( new_socket , buffer, 1024);
 
-                if(strncmp(buffer, "/exit", 5) == 0)
+                if (strncmp(buffer, "/exit", 5) == 0)
                 {
-                    exit(0); 
+                    printf("Client has disconnected\n");
+                    exit(0);
                 }
-                else
-                {
-                    printf("%s\n",buffer );
-                    send(new_socket , hello , strlen(hello) , 0 );
-                    printf("Hello message sent\n");
-                }
+
+                printf("%s\n",buffer );
+                send(new_socket , hello , strlen(hello) , 0 );
+                printf("Hello message sent\n");
             }
         }
     }
+
+    return 0;
 }
