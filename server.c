@@ -60,6 +60,8 @@ int main(int argc, char const *argv[])
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
     char *confirm = "Message received";
+    char *quit;
+    quit = (char*) calloc(51, sizeof(char));
 
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
@@ -92,33 +94,44 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
-    while(1)
+
+    if (Fork() == 0)
     {
-        if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
-                        (socklen_t*)&addrlen))<0)
+        while(1)
         {
-            perror("accept");
-            exit(EXIT_FAILURE);
-        }
+            if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
+                            (socklen_t*)&addrlen))<0)
+            {
+                perror("accept");
+                exit(EXIT_FAILURE);
+            }
 
-        if (Fork() == 0)
-        {
-            while(1)
-            {   
-                valread = read( new_socket , buffer, 1024);
+            if (Fork() == 0)
+            {
+                while(1)
+                {   
+                    valread = read( new_socket , buffer, 1024);
 
-                if (strncmp(buffer, "/exit", 5) == 0)
-                {
-                    printf("Client has disconnected\n");
-                    exit(0);
+                    if (strncmp(buffer, "/exit", 5) == 0)
+                    {
+                        printf("Client has disconnected\n");
+                        exit(0);
+                    }
+
+                    printf("%s\n",buffer );
+                    send(new_socket , confirm , strlen(confirm) , 0 );
+                    printf("Confirmation message sent\n");
                 }
-
-                printf("%s\n",buffer );
-                send(new_socket , confirm , strlen(confirm) , 0 );
-                printf("Confirmation message sent\n");
             }
         }
     }
 
-    return 0;
+    do {
+        printf("Server active\nType '/quit' to terminate\n");
+        fgets(quit, (50*sizeof(char)), stdin);
+        //printf("%s\n", quit);
+    } while(strncmp(quit, "/quit", 5) != 0);
+
+    free(quit);
+    exit(0);
 }
