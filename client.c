@@ -10,8 +10,25 @@
 
 
    
-void logMsg(char *msg, char state, FILE *fp){
+   /**
+   * This method updates the log file kept by the client. it will but the date and time a message was sent or recieved, 
+   * as well as what the message was. 
+   *
+   *    routine: logMsg
+   *
+   *    return type: void
+   *
+   *     parameters:
+   *     char *msg:  the message that was sent or recieved, will be added to log
+   *     char state: must be a char value of 's' or 'r', to indicate if the message was sent or recieved. (s = sent, r = recieved)
+   *     
+   *     @since 4/17/2021
+   *     @author Adam Kardorff
+   */
+   
+void logMsg(char *msg, char state){
 	
+    FILE *fp = fopen("ClientLog.txt", "a");
 	time_t t;
 	time(&t);
 	
@@ -22,15 +39,16 @@ void logMsg(char *msg, char state, FILE *fp){
 		fprintf(fp, "%s message recieved: %s\n\n", ctime(&t), msg);
 	}
 	else{
-	 	printf("ERROR: incorrect format for 'state'\n");
+	 	printf("ERROR: incorrect format for char state\n");
 	}
+
+	fclose(fp);
 
 }
    
    
 int main(int argc, char const *argv[])
 {
-    FILE *fp = fopen("ClientLog.txt", "a");
     int sock = 0;
     int valread;
     struct sockaddr_in serv_addr;
@@ -72,18 +90,17 @@ int main(int argc, char const *argv[])
 			if(strncmp(msg, "/exit", 5) == 0)
 			{
 				free(msg);
-				fclose(fp);
 				exit(0); 
 			}
 			
 			send(sock , msg , (CHAR_LIMIT*sizeof(char)) , 0 );
 			printf("message sent: %s\n", msg);
-			logMsg(msg, 's', fp);
+			logMsg(msg, 's');
 			
 			valread = read( sock , fromServer, 1024);
 			printf("%s\n",fromServer );
-			logMsg(fromServer, 'r', fp);
-			
+			logMsg(fromServer, 'r');
+		
 		}
 	}
 }
