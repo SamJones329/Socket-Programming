@@ -4,17 +4,40 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #define CHAR_LIMIT 51
 #define PORT 8080
+
+
+   
+void logMsg(char *msg, char state, FILE *fp){
+	
+	time_t t;
+	time(&t);
+	
+	if(state == 's'){
+		fprintf(fp, "%s message sent: %s\n", ctime(&t), msg);
+	}
+	else if(state == 'r'){
+		fprintf(fp, "%s message recieved: %s\n\n", ctime(&t), msg);
+	}
+	else{
+	 	printf("ERROR: incorrect format for 'state'\n");
+	}
+
+}
+   
    
 int main(int argc, char const *argv[])
 {
+    FILE *fp = fopen("ClientLog.txt", "a");
     int sock = 0;
     int valread;
     struct sockaddr_in serv_addr;
     char *msg;
     msg = (char*) calloc(CHAR_LIMIT, sizeof(char));
     char fromServer[1024] = {0};    
+
 	
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
@@ -46,17 +69,21 @@ int main(int argc, char const *argv[])
 			printf("insert message to send to server, or type '/exit' to end program (limit %d characters): \n", CHAR_LIMIT-1);
 			fgets(msg, (50*sizeof(char)), stdin);
 			
-			send(sock , msg , (CHAR_LIMIT*sizeof(char)) , 0 );
-			printf("message sent: %s\n", msg);
-
 			if(strncmp(msg, "/exit", 5) == 0)
 			{
 				free(msg);
+				fclose(fp);
 				exit(0); 
 			}
-
+			
+			send(sock , msg , (CHAR_LIMIT*sizeof(char)) , 0 );
+			printf("message sent: %s\n", msg);
+			logMsg(msg, 's', fp);
+			
 			valread = read( sock , fromServer, 1024);
 			printf("%s\n",fromServer );
+			logMsg(fromServer, 'r', fp);
+			
 		}
 	}
 }
