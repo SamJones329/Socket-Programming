@@ -87,15 +87,17 @@ int main(int argc, char const *argv[])
 			printf("insert message to send to server, or type '/exit' to end program (limit %d characters): \n", CHAR_LIMIT-1);
 			fgets(msg, (50*sizeof(char)), stdin);
 			
-			if(strncmp(msg, "/exit", 5) == 0)
-			{
-				free(msg);
-				exit(0); 
-			}
 			
 			send(sock , msg , (CHAR_LIMIT*sizeof(char)) , 0 );
 			printf("message sent: %s\n", msg);
 			logMsg(msg, 's');
+			
+			if(strncmp(msg, "/exit", 5) == 0)
+			{
+				free(msg);
+				exit(0); 
+			}			
+			
 			
 			valread = read( sock , fromServer, 1024);
 			printf("%s\n",fromServer );
