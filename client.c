@@ -33,10 +33,10 @@ void LogMsg(char *msg, char state){
 	time(&t);
 	
 	if(state == 's'){
-		fprintf(fp, "%s message sent: '%s'\n", ctime(&t), msg);
+		fprintf(fp, "%s message sent: %s\n", ctime(&t), msg);
 	}
 	else if(state == 'r'){
-		fprintf(fp, "%s message recieved: '%s'\n\n", ctime(&t), msg);
+		fprintf(fp, "%s message recieved: %s\n\n", ctime(&t), msg);
 	}
 	else{
 	 	printf("ERROR: incorrect format for char state\n");
