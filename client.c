@@ -26,17 +26,17 @@
    *     @author Adam Kardorff
    */
    
-void logMsg(char *msg, char state){
+void LogMsg(char *msg, char state){
 	
     FILE *fp = fopen("ClientLog.txt", "a");
 	time_t t;
 	time(&t);
 	
 	if(state == 's'){
-		fprintf(fp, "%s message sent: %s\n", ctime(&t), msg);
+		fprintf(fp, "%s message sent: '%s'\n", ctime(&t), msg);
 	}
 	else if(state == 'r'){
-		fprintf(fp, "%s message recieved: %s\n\n", ctime(&t), msg);
+		fprintf(fp, "%s message recieved: '%s'\n\n", ctime(&t), msg);
 	}
 	else{
 	 	printf("ERROR: incorrect format for char state\n");
@@ -90,7 +90,7 @@ int main(int argc, char const *argv[])
 			
 			send(sock , msg , (CHAR_LIMIT*sizeof(char)) , 0 );
 			printf("message sent: %s\n", msg);
-			logMsg(msg, 's');
+			LogMsg(msg, 's');
 			
 			if(strncmp(msg, "/exit", 5) == 0)
 			{
@@ -101,7 +101,7 @@ int main(int argc, char const *argv[])
 			
 			valread = read( sock , fromServer, 1024);
 			printf("%s\n",fromServer );
-			logMsg(fromServer, 'r');
+			LogMsg(fromServer, 'r');
 		
 		}
 	}
