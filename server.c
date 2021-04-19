@@ -1,4 +1,3 @@
-// Server side C/C++ program to demonstrate Socket programming
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
@@ -7,8 +6,46 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <time.h>
 
 #define PORT 8080
+
+
+   /**
+   * This method updates the log file kept by the server. it will but the date and time a message was sent or recieved, 
+   * as well as what the message was. 
+   *
+   *    routine: LogMsg
+   *
+   *    return type: void
+   *
+   *     parameters:
+   *     char *msg:  the message that was sent or recieved, will be added to log
+   *     char state: must be a char value of 's' or 'r', to indicate if the message was sent or recieved. (s = sent, r = recieved)
+   *     
+   *     @since 4/19/2021
+   *     @author Adam Kardorff
+   */
+   
+void LogMsg(char *msg, char state){
+	
+    FILE *fp = fopen("ServerLog.txt", "a");
+	time_t t;
+	time(&t);
+	
+	if(state == 's'){
+		fprintf(fp, "%s message sent: '%s'\n\n", ctime(&t), msg);
+	}
+	else if(state == 'r'){
+		fprintf(fp, "%s message recieved: '%s'\n", ctime(&t), msg);
+	}
+	else{
+	 	printf("ERROR: incorrect format for char state\n");
+	}
+
+	fclose(fp);
+
+}
 
 /**
  * This method is an error-reporting function, used to report a unix-style error.
@@ -111,6 +148,7 @@ int main(int argc, char const *argv[])
                 while(1)
                 {   
                     valread = read( new_socket , buffer, 1024);
+                    LogMsg(buffer, 'r');
 
                     if (strncmp(buffer, "/exit", 5) == 0)
                     {
@@ -120,6 +158,7 @@ int main(int argc, char const *argv[])
 
                     printf("%s\n",buffer );
                     send(new_socket , confirm , strlen(confirm) , 0 );
+                    LogMsg(confirm, 's');
                     printf("Confirmation message sent\n");
                 }
             }
