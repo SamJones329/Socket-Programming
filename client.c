@@ -1,3 +1,15 @@
+/**
+*
+*	This program will send a message to server, recieve its response, and log all messages sent and recieved.
+*
+*	CSC Honors Programming Project
+*
+*	@since 4/20/2021
+*	@authors George Buras, Samuel Jones, Adam Kardorff 
+*
+*/
+
+
 #include <stdio.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -66,7 +78,6 @@ int main(int argc, char const *argv[])
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(PORT);
 		
-	// Convert IPv4 and IPv6 addresses from text to binary form
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0) 
 	{
 		printf("\nInvalid address/ Address not supported \n");
