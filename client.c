@@ -1,6 +1,6 @@
 /**
 *
-*	This program will send a message to server, recieve its response, and log all messages sent and recieved.
+*	This program will send a message to the server and receive its response, while logging all messages sent and recieved.
 *
 *	CSC Honors Programming Project
 *
