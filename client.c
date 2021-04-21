@@ -22,46 +22,7 @@
 #define PORT 8080
 
 
-/**
- * Safely creates a socket for the given address family and address.
- *
- *    routine: createSocket
- *
- *    return type: int		the file descriptor of the established socket
- *
- *     parameters:
- *     int addrFam:			the address family for the socket to use, i.e. AF_INET (IPv4) or AF_INET6 (IPv6)
- *     char* addrStr:		the string representation of the address to establish a TCP connection to
- *     
- *     @since 4/20/2021
- *     @author Samuel Jones
- */
-int createSocket(int addrFam, char* addrStr) {
-	
-	int sock = 0, valread;
-	struct sockaddr_in sa;
 
-	if((sock = socket(addrFam, SOCK_STREAM, 0)) < 0) {
-		printf("Socket creation error\n");
-		return -1;
-	}
-
-	sa.sin_family = addrFam;
-	sa.sin_port = htons(PORT);
-
-	if(inet_pton(addrFam, addrStr, &sa.sin_addr) <= 0) {
-		printf("Address invalid or not supported\n");
-		return -1;
-	}
-
-	if(connect(sock, (struct sockaddr *) &sa, sizeof(sa)) < 0) {
-		printf("Connection failed\n");
-		return -1;
-	}
-
-	return sock;
-
-}
 
 
 /**
@@ -86,10 +47,10 @@ void LogMsg(char *msg, char state){
 	time(&t);
 	
 	if(state == 's'){
-		fprintf(fp, "%s message sent: %s\n\n", ctime(&t), msg);
+		fprintf(fp, "%s message sent: %s\n", ctime(&t), msg);
 	}
 	else if(state == 'r'){
-		fprintf(fp, "%s message recieved: %s\n", ctime(&t), msg);
+		fprintf(fp, "%s message recieved: %s\n\n", ctime(&t), msg);
 	}
 	else{
 	 	printf("ERROR: incorrect format for char state\n");
@@ -100,13 +61,11 @@ void LogMsg(char *msg, char state){
 }
 
 
-int main(int argc, char const *argv[]) {
-
-	int sock = 0;
-    int valread;
-    struct sockaddr_in serv_addr;
+    int main(int argc, char const *argv[]) {
+    int sock = 0, valread;
+    struct sockaddr_in sa;
     char *msg = (char*) calloc(CHAR_LIMIT, sizeof(char));
-	char addrstr[CHAR_LIMIT] = "192.168.83.128";
+	char addrstr[CHAR_LIMIT] = "127.0.1.1";
     char fromServer[1024] = {0};    
 	
 	//get server address
@@ -119,11 +78,24 @@ int main(int argc, char const *argv[]) {
 	// }
 
 	// printf("Address Inputted: %s\n", addrstr);
-
-	if((sock = createSocket(AF_INET, addrstr) < 0)) {
-		printf("Something went wrong, please restart program to try again\n");
-		exit(EXIT_SUCCESS);
+	if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+		printf("Socket creation error\n");
+		return -1;
 	}
+
+	sa.sin_family = AF_INET;
+	sa.sin_port = htons(PORT);
+
+	if(inet_pton(AF_INET, addrstr, &sa.sin_addr) <= 0) {
+		printf("Address invalid or not supported\n");
+		return -1;
+	}
+
+	if(connect(sock, (struct sockaddr *) &sa, sizeof(sa)) < 0) {
+		printf("Connection failed\n");
+		return -1;
+	}
+
 	// Infinite loop to allow the client to send as many messages as desired
 	while(1)
 	{
