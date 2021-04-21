@@ -22,6 +22,20 @@
 #define PORT 8080
 
 
+/**
+ * Safely creates a socket for the given address family and address.
+ *
+ *    routine: createSocket
+ *
+ *    return type: int		the file descriptor of the established socket
+ *
+ *     parameters:
+ *     int addrFam:			the address family for the socket to use, i.e. AF_INET (IPv4) or AF_INET6 (IPv6)
+ *     char* addrStr:		the string representation of the address to establish a TCP connection to
+ *     
+ *     @since 4/20/2021
+ *     @author Samuel Jones
+ */
 int createSocket(int addrFam, char* addrStr) {
 	
 	int sock = 0, valread;
@@ -49,26 +63,64 @@ int createSocket(int addrFam, char* addrStr) {
 
 }
 
-   
+
+/**
+ * This method updates the log file kept by the client. it will but the date and time a message was sent or recieved, 
+ * as well as what the message was. 
+ *
+ *    routine: LogMsg
+ *
+ *    return type: void
+ *
+ *     parameters:
+ *     char *msg:  the message that was sent or recieved, will be added to log
+ *     char state: must be a char value of 's' or 'r', to indicate if the message was sent or recieved. (s = sent, r = recieved)
+ *     
+ *     @since 4/19/2021
+ *     @author Adam Kardorff
+ */
+void LogMsg(char *msg, char state){
+	
+    FILE *fp = fopen("ClientLog.txt", "a");
+	time_t t;
+	time(&t);
+	
+	if(state == 's'){
+		fprintf(fp, "%s message sent: %s\n\n", ctime(&t), msg);
+	}
+	else if(state == 'r'){
+		fprintf(fp, "%s message recieved: %s\n", ctime(&t), msg);
+	}
+	else{
+	 	printf("ERROR: incorrect format for char state\n");
+	}
+
+	fclose(fp);
+
+}
+
+
 int main(int argc, char const *argv[]) {
 
 	int sock = 0;
     int valread;
     struct sockaddr_in serv_addr;
     char *msg = (char*) calloc(CHAR_LIMIT, sizeof(char));
-	char *addrStr = (char*) malloc(CHAR_LIMIT);
+	char addrstr[CHAR_LIMIT] = "192.168.83.128";
     char fromServer[1024] = {0};    
 	
 	//get server address
-	printf("please input the IPv4 address of the server, or type '/exit' to end program: \n");
-	fgets(addrStr, (50*sizeof(char)), stdin);
+	// printf("please input the IPv4 address of the server, or type '/exit' to end program: ");
+	// fgets(addrstr, CHAR_LIMIT, stdin);
 	
-	if(strncmp(addrStr, "/exit", 5) == 0){
-		free(addrStr);
-		return 0; 
-	}
+	// if(strncmp(addrstr, "/exit", 5) == 0){
+	// 	//free(addrstr);
+	// 	return 0; 
+	// }
 
-	if((sock = createSocket(AF_INET, addrStr) < 0)) {
+	// printf("Address Inputted: %s\n", addrstr);
+
+	if((sock = createSocket(AF_INET, addrstr) < 0)) {
 		printf("Something went wrong, please restart program to try again\n");
 		exit(EXIT_SUCCESS);
 	}
