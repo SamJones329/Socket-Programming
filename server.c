@@ -109,7 +109,11 @@ int main(int argc, char const *argv[])
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
+
+    // Confimation message
     char *confirm = "Message received";
+
+    // String used to check input for the /quit command
     char *quit;
     quit = (char*) calloc(51, sizeof(char));
 
@@ -144,9 +148,10 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
-
+    // Forks to look for quit command while handling clients
     if (Fork() == 0)
     {
+        // Infinite loop to allow multiple clients to connect to the same server
         while(1)
         {
             if ((new_socket = accept(server_fd, (struct sockaddr *)&address, 
@@ -156,13 +161,16 @@ int main(int argc, char const *argv[])
                 exit(EXIT_FAILURE);
             }
 
+            // The child process handles the client connection while the parent looks for new clients
             if (Fork() == 0)
             {
+                // Infinite loop to allow as many messages to be sent as desired
                 while(1)
                 {   
                     valread = read( new_socket , buffer, 1024);
                     LogMsg(buffer, 'r');
 
+                    // The /exit message is sent when the client disconnects from the server
                     if (strncmp(buffer, "/exit", 5) == 0)
                     {
                         printf("Client has disconnected\n");

@@ -17,6 +17,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+
 #define CHAR_LIMIT 51
 #define PORT 8080
 
@@ -91,7 +92,7 @@ int main(int argc, char const *argv[])
 	}
 	else
 	{
-		//will loop to allow the client to send as many messages as desired
+		// Infinite loop to allow the client to send as many messages as desired
 		while(1)
 		{
 			//ask for user input to determine message to send
@@ -103,6 +104,7 @@ int main(int argc, char const *argv[])
 			printf("message sent: %s\n", msg);
 			LogMsg(msg, 's');
 			
+			// The /exit message will disconnect the client
 			if(strncmp(msg, "/exit", 5) == 0)
 			{
 				free(msg);
