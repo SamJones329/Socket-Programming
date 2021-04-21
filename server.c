@@ -1,3 +1,16 @@
+/**
+*
+*	This server will receive messages from a client and send a response, while logging all messages sent and received
+*
+*	CSC Honors Programming Project
+*
+*	@since 4/20/2021
+*	@authors George Buras, Samuel Jones, Adam Kardorff 
+*
+*/
+
+
+
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
