@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "cstdlib": "c",
-        "stdlib.h": "c",
-        "netdb.h": "c"
-    }
-}
