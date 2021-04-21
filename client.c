@@ -132,7 +132,7 @@ int main(int argc, char const *argv[]) {
 		fgets(msg, (50*sizeof(char)), stdin);
 		
 		
-		send(sock , msg , (CHAR_LIMIT*sizeof(char)) , 0 );
+		send(sock, msg, (CHAR_LIMIT*sizeof(char)), 0);
 		printf("message sent: %s\n", msg);
 		LogMsg(msg, 's');
 		
@@ -143,8 +143,10 @@ int main(int argc, char const *argv[]) {
 			exit(0); 
 		}			
 		
-		valread = read( sock , fromServer, 1024);
-		printf("%s\n",fromServer );
+		printf("about to read\n");
+		valread = read(sock, fromServer, 1024);
+		printf("im here\n");
+		printf("%s\n", fromServer);
 		LogMsg(fromServer, 'r');
 	
 	}

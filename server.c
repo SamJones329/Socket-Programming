@@ -167,7 +167,11 @@ int main(int argc, char const *argv[])
                 // Infinite loop to allow as many messages to be sent as desired
                 while(1)
                 {   
-                    valread = read( new_socket , buffer, 1024);
+                    valread = read(new_socket, buffer, 1024);
+                    if(!valread) {
+                        sleep(250);
+                        continue;
+                    }
                     LogMsg(buffer, 'r');
 
                     // The /exit message is sent when the client disconnects from the server
@@ -178,7 +182,7 @@ int main(int argc, char const *argv[])
                     }
 
                     printf("%s\n",buffer );
-                    send(new_socket , confirm , strlen(confirm) , 0 );
+                    send(new_socket, confirm, strlen(confirm), 0 );
                     LogMsg(confirm, 's');
                     printf("Confirmation message sent\n");
                 }

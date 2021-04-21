@@ -58,3 +58,6 @@ testProgs
 
 #IDE config
 .vscode
+
+#Log files
+*Log.txt
