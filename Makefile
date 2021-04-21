@@ -9,4 +9,4 @@ client:
 remake: clean all
 
 clean:
-	rm client server
+	rm client server ServerLog.txt ClientLog.txt
