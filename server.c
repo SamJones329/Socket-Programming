@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <time.h>
+#include <signal.h>
 
 #define PORT 8080
 
@@ -147,6 +148,8 @@ int main(int argc, char const *argv[])
         perror("listen");
         exit(EXIT_FAILURE);
     }
+    
+    fflush(stdout);
 
     // Forks to look for quit command while handling clients
     if (Fork() == 0)
@@ -161,6 +164,8 @@ int main(int argc, char const *argv[])
                 exit(EXIT_FAILURE);
             }
 
+	     fflush(stdout);
+	     
             // The child process handles the client connection while the parent looks for new clients
             if (Fork() == 0)
             {
@@ -168,23 +173,23 @@ int main(int argc, char const *argv[])
                 while(1)
                 {   
                     valread = read(new_socket, buffer, 1024);
-                    if(!valread) {
-                        sleep(250);
-                        continue;
-                    }
                     LogMsg(buffer, 'r');
 
                     // The /exit message is sent when the client disconnects from the server
                     if (strncmp(buffer, "/exit", 5) == 0)
                     {
                         printf("Client has disconnected\n");
+                        fflush(stdout);
                         exit(0);
                     }
 
-                    printf("%s\n",buffer );
+                    printf("Message recieved: %s\n",buffer );
+                    fflush(stdout);
+                    
                     send(new_socket, confirm, strlen(confirm), 0 );
                     LogMsg(confirm, 's');
                     printf("Confirmation message sent\n");
+                    fflush(stdout);
                 }
             }
         }
@@ -197,5 +202,6 @@ int main(int argc, char const *argv[])
     } while(strncmp(quit, "/quit", 5) != 0);
 
     free(quit);
+    kill(0, SIGTERM);
     exit(0);
 }
