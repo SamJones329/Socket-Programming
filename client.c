@@ -26,19 +26,20 @@
 
 
 /**
- * This method updates the log file kept by the client. it will but the date and time a message was sent or recieved, 
- * as well as what the message was. 
+ * This method updates the log file kept by the client. it will but the date and time a message 
+ * was sent or recieved, as well as what the message was. 
  *
  *    routine: LogMsg
  *
  *    return type: void
  *
- *     parameters:
- *     char *msg:  the message that was sent or recieved, will be added to log
- *     char state: must be a char value of 's' or 'r', to indicate if the message was sent or recieved. (s = sent, r = recieved)
+ *    parameters:
+ *     	char *msg:  the message that was sent or recieved, will be added to log
+ *     	char state: must be a char value of 's', 'r', or 'e', to indicate if the message was sent, 
+ * 	   		recieved, or for exiting. (s = sent, r = recieved, e = exit)
  *     
  *     @since 4/19/2021
- *     @author Adam Kardorff
+ *     @author Adam Kardorff, Samuel Jones
  */
 void LogMsg(char *msg, char state){
 	
