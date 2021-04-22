@@ -210,6 +210,6 @@ int main(int argc, char const *argv[])
     } while(strncmp(quit, "/quit", 5) != 0);
 
     free(quit);
-    kill(0, SIGTERM);
+    kill(0, SIGINT);
     exit(0);
 }
