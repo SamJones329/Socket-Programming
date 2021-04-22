@@ -119,9 +119,9 @@ void LogMsg(char *msg, char state){
 			exit(0); 
 		}			
 		
-		printf("about to read\n");
+		//printf("about to read\n");
 		valread = read(sock, fromServer, 1024);
-		printf("im here\n");
+		//printf("im here\n");
 		printf("%s\n", fromServer);
 		LogMsg(fromServer, 'r');
 	
