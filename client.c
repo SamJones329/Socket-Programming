@@ -65,19 +65,23 @@ void LogMsg(char *msg, char state){
     int sock = 0, valread;
     struct sockaddr_in sa;
     char *msg = (char*) calloc(CHAR_LIMIT, sizeof(char));
-	char addrstr[CHAR_LIMIT] = "127.0.1.1";
+    char addrstr[CHAR_LIMIT] = "127.0.1.1";
+    char addrlen;
     char fromServer[1024] = {0};    
 	
 	//get server address
-	// printf("please input the IPv4 address of the server, or type '/exit' to end program: ");
-	// fgets(addrstr, CHAR_LIMIT, stdin);
-	
-	// if(strncmp(addrstr, "/exit", 5) == 0){
-	// 	//free(addrstr);
-	// 	return 0; 
-	// }
+	printf("please input the IPv4 address of the server, or type '/exit' to end program: ");
+	fgets(addrstr, CHAR_LIMIT, stdin);
+	    
+	if(strncmp(addrstr, "/exit", 5) == 0){
+		//free(addrstr);
+		return 0; 
+	}
 
+	addrlen = strlen(addrstr);
+	addrstr[addrlen-1] = '\0';
 	// printf("Address Inputted: %s\n", addrstr);
+	    
 	if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("Socket creation error\n");
 		return -1;
