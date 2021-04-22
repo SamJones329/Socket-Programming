@@ -23,6 +23,8 @@
 #include <signal.h>
 
 #define PORT 8080
+#define CONFIRM "Message received"
+#define DISCONNECT "Client disconnected"
 
 
    /**
@@ -53,6 +55,9 @@ void LogMsg(char *msg, char state){
 	else if(state == 'r'){
 		fprintf(fp, "%s message recieved: %s\n", ctime(&t), msg);
 	}
+    else if(state == 'd') {
+        fprintf(fp, "%s at %s\n", msg, ctime(&t));
+    }
 	else{
 	 	printf("ERROR: incorrect format for char state\n");
 	}
@@ -110,9 +115,7 @@ int main(int argc, char const *argv[])
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
-
-    // Confimation message
-    char *confirm = "Message received";
+    char confirmlen = strlen(CONFIRM);
 
     // String used to check input for the /quit command
     char *quit;
@@ -176,19 +179,23 @@ int main(int argc, char const *argv[])
                     LogMsg(buffer, 'r');
 
                     // The /exit message is sent when the client disconnects from the server
-                    if (strncmp(buffer, "/exit", 5) == 0)
-                    {
-                        printf("Client has disconnected\n");
-                        fflush(stdout);
-                        exit(0);
+                    int buflen = strlen(buffer);
+                    if(buflen > 5) {
+                        if (strncmp(&buffer[buflen-5], "/exit", 5) == 0)
+                        {
+                            printf("Client has disconnected\n\n");
+                            LogMsg(DISCONNECT, 'd');
+                            fflush(stdout);
+                            exit(0);
+                        }
                     }
 
-                    printf("Message recieved: %s\n",buffer );
+                    printf("Message recieved: \"%s\"\n",buffer );
                     fflush(stdout);
                     
-                    send(new_socket, confirm, strlen(confirm), 0 );
-                    LogMsg(confirm, 's');
-                    printf("Confirmation message sent\n");
+                    send(new_socket, CONFIRM, confirmlen, 0 );
+                    LogMsg(CONFIRM, 's');
+                    printf("Confirmation message sent\n\n");
                     fflush(stdout);
                 }
             }
@@ -196,7 +203,7 @@ int main(int argc, char const *argv[])
     }
 
     do {
-        printf("Server active\nType '/quit' to terminate\n");
+        printf("Input '/quit' at anytime to terminate\n\n");
         fgets(quit, (50*sizeof(char)), stdin);
         //printf("%s\n", quit);
     } while(strncmp(quit, "/quit", 5) != 0);
